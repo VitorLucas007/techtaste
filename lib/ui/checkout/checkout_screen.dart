@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:techtaste/model/dishe.dart';
+import 'package:techtaste/ui/_core/app_colors.dart';
 import 'package:techtaste/ui/_core/bag_provider.dart';
 
 class CheckoutScreen extends StatelessWidget {
@@ -12,9 +13,14 @@ class CheckoutScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Sacola'),
-        actions: [TextButton(onPressed: () {
-          bagProvider.clearBag();
-        }, child: Text('Limpar'))],
+        actions: [
+          TextButton(
+            onPressed: () {
+              bagProvider.clearBag();
+            },
+            child: Text('Limpar'),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -22,37 +28,50 @@ class CheckoutScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text('Pedidos', textAlign: TextAlign.center,),
-              Column(
-                children: List.generate(
-                  bagProvider.getMapByAmount().keys.length,
-                  (index) {
-                    Dish dish =
-                        bagProvider.getMapByAmount().keys.toList()[index];
-                    return ListTile(
-                      leading: Image.asset('assets/dishes/default.png'),
-                      title: Text(dish.name),
-                      subtitle: Text('R\$ ${dish.price.toStringAsFixed(2)}'),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              bagProvider.removeDishes(dish);
-                            },
-                            icon: Icon(Icons.remove),
+              Text(
+                'Pedidos',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 16, left: 8, right: 8),
+                child: Column(
+                  children: List.generate(
+                    bagProvider.getMapByAmount().keys.length,
+                    (index) {
+                      Dish dish =
+                          bagProvider.getMapByAmount().keys.toList()[index];
+                      return Card(
+                        color: AppColors.lightBackgroundColor,
+                        child: ListTile(
+                          leading: Image.asset('assets/dishes/default.png' ),
+                          title: Text(dish.name),
+                          subtitle: Text('R\$ ${dish.price.toStringAsFixed(2)}'),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  bagProvider.removeDishes(dish);
+                                },
+                                icon: Icon(Icons.remove),
+                              ),
+                              Text(
+                                bagProvider.getMapByAmount()[dish].toString(),
+                                style: TextStyle(fontSize: 18),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  bagProvider.addAllDishes([dish]);
+                                },
+                                icon: Icon(Icons.add),
+                              ),
+                            ],
                           ),
-                          Text(
-                            bagProvider.getMapByAmount()[dish].toString(),
-                            style: TextStyle(fontSize: 18),
-                          ),
-                          IconButton(onPressed: () {
-                            bagProvider.addAllDishes([dish]);
-                          }, icon: Icon(Icons.add)),
-                        ],
-                      ),
-                    );
-                  },
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
             ],
